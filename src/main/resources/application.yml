@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: filmapi
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/filmapi}
+    username: ${DATABASE_USERNAME:filmapi}
+    password: ${DATABASE_PASSWORD:filmapi123}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY:RbGsiQ7AavARvOeksh9RlEfS0qBfq+no5YdJmdpruAg=}
+  expiration: ${JWT_EXPIRATION:3600000}
