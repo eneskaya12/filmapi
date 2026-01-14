@@ -100,6 +100,38 @@ docker-compose down
 ```
 
 
+## Default Data
+
+The application automatically seeds the database with sample data on first run:
+
+**Users:**
+
+| Email           | Password   | Role  |
+|-----------------|------------|-------|
+| admin@test.com  | admin123   | ADMIN |
+| user@test.com   | user123    | USER  |
+
+**Categories:** Aksiyon, Komedi, Dram, Korku, Bilim Kurgu, Romantik
+
+**Movies:**
+
+| Title             | Language | IMDB |
+|-------------------|----------|------|
+| Inception         | EN       | 8.8  |
+| The Dark Knight   | EN       | 9.0  |
+| Interstellar      | EN       | 8.6  |
+| Kelebeğin Rüyası  | TR       | 8.0  |
+| Ayla              | TR       | 8.3  |
+| The Conjuring     | EN       | 7.5  |
+
+> Data is only seeded when the respective tables are empty.
+
+
+## Database Schema
+
+![Database Diagram](docs/filmapi-diagram.png)
+
+
 ## API Documentation
 
 Access Swagger UI to explore and test the API:
