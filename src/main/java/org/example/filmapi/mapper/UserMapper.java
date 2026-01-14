@@ -4,34 +4,20 @@ import org.example.filmapi.model.dto.request.UserCreateRequest;
 import org.example.filmapi.model.dto.request.UserUpdateRequest;
 import org.example.filmapi.model.dto.response.UserResponse;
 import org.example.filmapi.model.entity.User;
-import org.example.filmapi.model.enums.Role;
-import org.springframework.stereotype.Component;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import java.util.Optional;
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-@Component
-public class UserMapper {
+    @Mapping(target = "role", constant = "USER")
+    User toUser(UserCreateRequest request);
 
-    public User toUser(UserCreateRequest request) {
-        return User.builder()
-                .fullname(request.fullname())
-                .email(request.email())
-                .role(Role.USER)
-                .build();
-    }
+    UserResponse toUserResponse(User user);
 
-    public UserResponse toUserResponse(User user){
-        return UserResponse.builder()
-                .id(user.getId())
-                .fullname(user.getFullname())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
-    }
-
-    public void updateUserFromRequest(UserUpdateRequest request, User user){
-        Optional.ofNullable(request.fullname()).ifPresent(user::setFullname);
-        Optional.ofNullable(request.email()).ifPresent(user::setEmail);
-        Optional.ofNullable(request.role()).ifPresent(user::setRole);
-    }
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
 }

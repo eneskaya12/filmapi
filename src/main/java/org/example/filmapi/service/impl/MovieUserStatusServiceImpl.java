@@ -2,6 +2,7 @@ package org.example.filmapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.filmapi.exception.EntityNotFoundException;
+import org.example.filmapi.mapper.MovieUserStatusMapper;
 import org.example.filmapi.model.dto.request.MovieUserStatusRequest;
 import org.example.filmapi.model.dto.response.MovieUserStatusResponse;
 import org.example.filmapi.model.entity.Movie;
@@ -23,6 +24,7 @@ public class MovieUserStatusServiceImpl implements MovieUserStatusService {
     private final MovieUserStatusRepository movieUserStatusRepository;
     private final MovieRepository movieRepository;
     private final AuthenticationService authenticationService;
+    private final MovieUserStatusMapper movieUserStatusMapper;
 
     @Override
     @Transactional
@@ -55,7 +57,7 @@ public class MovieUserStatusServiceImpl implements MovieUserStatusService {
         }
 
         return movieUserStatusRepository.findByUserIdAndMovieId(user.getId(), movieId)
-                .map(this::toResponse)
+                .map(movieUserStatusMapper::toResponse)
                 .orElseGet(() -> MovieUserStatusResponse.builder()
                         .movieId(movieId)
                         .movieTitle(movieRepository.findById(movieId).get().getTitle())
@@ -69,7 +71,7 @@ public class MovieUserStatusServiceImpl implements MovieUserStatusService {
         User user = authenticationService.getAuthenticatedUser();
         return movieUserStatusRepository.findByUserId(user.getId())
                 .stream()
-                .map(this::toResponse)
+                .map(movieUserStatusMapper::toResponse)
                 .toList();
     }
 
@@ -78,7 +80,7 @@ public class MovieUserStatusServiceImpl implements MovieUserStatusService {
         User user = authenticationService.getAuthenticatedUser();
         return movieUserStatusRepository.findByUserIdAndIsFavoriteTrue(user.getId())
                 .stream()
-                .map(this::toResponse)
+                .map(movieUserStatusMapper::toResponse)
                 .toList();
     }
 
@@ -87,16 +89,7 @@ public class MovieUserStatusServiceImpl implements MovieUserStatusService {
         User user = authenticationService.getAuthenticatedUser();
         return movieUserStatusRepository.findByUserIdAndIsWatchedTrue(user.getId())
                 .stream()
-                .map(this::toResponse)
+                .map(movieUserStatusMapper::toResponse)
                 .toList();
-    }
-
-    private MovieUserStatusResponse toResponse(MovieUserStatus status) {
-        return MovieUserStatusResponse.builder()
-                .movieId(status.getMovie().getId())
-                .movieTitle(status.getMovie().getTitle())
-                .isFavorite(status.isFavorite())
-                .isWatched(status.isWatched())
-                .build();
     }
 }
