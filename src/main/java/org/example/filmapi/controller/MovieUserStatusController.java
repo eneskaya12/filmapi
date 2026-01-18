@@ -1,4 +1,4 @@
-package org.example.filmapi.contorller;
+package org.example.filmapi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
