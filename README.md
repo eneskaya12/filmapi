@@ -31,6 +31,7 @@ A RESTful API for managing movies, categories, and user interactions built with 
 * Docker, Docker Compose
 * Lombok
 * MapStruct
+* JUnit 5, Mockito, AssertJ (Testing)
 
 
 ## Getting Started
@@ -222,6 +223,61 @@ Allows users to track their movie interactions (favorites, watched).
 | GET    | `/api/users/profile/movies/watched`       | Get watched movies         |
 | GET    | `/api/users/profile/movies/{movieId}/status`  | Get status of a movie  |
 | PUT    | `/api/users/profile/movies/{movieId}/status`  | Update movie status    |
+
+
+## Testing
+
+The project includes comprehensive unit and integration tests.
+
+### Run All Tests
+
+```bash
+./mvnw test
+```
+
+### Test Coverage
+
+| Type | Count | Description |
+|------|-------|-------------|
+| Unit Tests | 50 | Service layer tests with mocked dependencies |
+| Integration Tests | 59 | Controller tests with MockMvc |
+| **Total** | **109** | |
+
+### Test Structure
+
+```
+src/test/java/
+├── config/
+│   └── TestSecurityConfig.java      # Security config for controller tests
+├── controller/
+│   ├── AuthControllerTest.java
+│   ├── CategoryControllerTest.java
+│   ├── MovieControllerTest.java
+│   ├── MovieCategoryControllerTest.java
+│   ├── MovieUserStatusControllerTest.java
+│   ├── UserControllerTest.java
+│   └── UserManagementControllerTest.java
+└── service/impl/
+    ├── AuthenticationServiceImplTest.java
+    ├── CategoryServiceImplTest.java
+    ├── MovieCategoryServiceImplTest.java
+    ├── MovieServiceImplTest.java
+    ├── MovieUserStatusServiceImplTest.java
+    └── UserServiceImplTest.java
+```
+
+### Run Specific Tests
+
+```bash
+# Run only unit tests
+./mvnw test -Dtest="*ServiceImplTest"
+
+# Run only integration tests
+./mvnw test -Dtest="*ControllerTest"
+
+# Run a specific test class
+./mvnw test -Dtest=CategoryServiceImplTest
+```
 
 
 ## Environment Variables
