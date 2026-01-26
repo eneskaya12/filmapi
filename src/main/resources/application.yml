@@ -3,12 +3,12 @@ server:
 
 spring:
   application:
-    name: filmapi
+    name: cinecore
 
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/filmapi}
-    username: ${DATABASE_USERNAME:filmapi}
-    password: ${DATABASE_PASSWORD:filmapi123}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/cinecore}
+    username: ${DATABASE_USERNAME:cinecore}
+    password: ${DATABASE_PASSWORD:cinecore123}
     driver-class-name: org.postgresql.Driver
 
   jpa:

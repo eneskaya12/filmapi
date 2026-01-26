@@ -1,4 +1,4 @@
-# Film API
+# CineCore
 
 A RESTful API for managing movies, categories, and user interactions built with Spring Boot. Users can browse movies, mark favorites, track watched films, and manage their personal movie lists.
 
@@ -47,20 +47,20 @@ A RESTful API for managing movies, categories, and user interactions built with 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/eneskaya12/filmapi.git
-cd filmapi
+git clone https://github.com/eneskaya12/cinecore.git
+cd cinecore
 ```
 
 2. Create a PostgreSQL database:
 
 ```sql
-CREATE DATABASE filmapi;
+CREATE DATABASE cinecore;
 ```
 
 3. Configure your database credentials in `src/main/resources/application.yml` or set environment variables:
 
 ```bash
-export DATABASE_URL=jdbc:postgresql://localhost:5432/filmapi
+export DATABASE_URL=jdbc:postgresql://localhost:5432/cinecore
 export DATABASE_USERNAME=your_username
 export DATABASE_PASSWORD=your_password
 ```
@@ -130,7 +130,7 @@ The application automatically seeds the database with sample data on first run:
 
 ## Database Schema
 
-![Database Diagram](docs/filmapi-diagram.png)
+![Database Diagram](docs/cinecore-diagram.png)
 
 
 ## API Documentation
@@ -284,8 +284,8 @@ src/test/java/
 
 | Variable            | Description                  | Default                                      |
 |---------------------|------------------------------|----------------------------------------------|
-| `DATABASE_URL`      | PostgreSQL connection URL    | `jdbc:postgresql://localhost:5432/filmapi`   |
-| `DATABASE_USERNAME` | Database username            | `filmapi`                                    |
+| `DATABASE_URL`      | PostgreSQL connection URL    | `jdbc:postgresql://localhost:5432/cinecore`  |
+| `DATABASE_USERNAME` | Database username            | `cinecore`                                   |
 | `DATABASE_PASSWORD` | Database password            | -                                            |
 | `JWT_SECRET_KEY`    | Secret key for JWT signing   | -                                            |
 | `JWT_EXPIRATION`    | Token expiration time (ms)   | `3600000` (1 hour)                           |

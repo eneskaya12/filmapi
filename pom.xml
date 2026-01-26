@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.example</groupId>
-    <artifactId>filmapi</artifactId>
+    <artifactId>cinecore</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>filmapi</name>
-    <description>filmapi</description>
+    <name>CineCore</name>
+    <description>CineCore - Film API</description>
     <url/>
     <licenses>
         <license/>
