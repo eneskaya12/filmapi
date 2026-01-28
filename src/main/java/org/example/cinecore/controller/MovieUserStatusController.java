@@ -9,6 +9,8 @@ import org.example.cinecore.model.dto.request.MovieUserStatusRequest;
 import org.example.cinecore.model.dto.response.GenericResponse;
 import org.example.cinecore.model.dto.response.MovieUserStatusResponse;
 import org.example.cinecore.service.MovieUserStatusService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,11 +32,12 @@ public class MovieUserStatusController {
             @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     @PutMapping("/{movieId}/status")
-    public GenericResponse<Void> updateStatus(
+    public ResponseEntity<GenericResponse<Void>> updateStatus(
             @PathVariable Long movieId,
             @RequestBody MovieUserStatusRequest request) {
         movieUserStatusService.updateStatus(movieId, request);
-        return new GenericResponse<>(true, "Movie status updated successfully", null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movie status updated successfully", null));
     }
 
     @Operation(
@@ -47,9 +50,10 @@ public class MovieUserStatusController {
             @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     @GetMapping("/{movieId}/status")
-    public GenericResponse<MovieUserStatusResponse> getStatus(@PathVariable Long movieId) {
+    public ResponseEntity<GenericResponse<MovieUserStatusResponse>> getStatus(@PathVariable Long movieId) {
         MovieUserStatusResponse response = movieUserStatusService.getStatus(movieId);
-        return new GenericResponse<>(true, "Movie status retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movie status retrieved successfully", response));
     }
 
     @Operation(
@@ -61,9 +65,10 @@ public class MovieUserStatusController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping
-    public GenericResponse<List<MovieUserStatusResponse>> getMyMovies() {
+    public ResponseEntity<GenericResponse<List<MovieUserStatusResponse>>> getMyMovies() {
         List<MovieUserStatusResponse> response = movieUserStatusService.getMyMovies();
-        return new GenericResponse<>(true, "Movies retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movies retrieved successfully", response));
     }
 
     @Operation(
@@ -75,9 +80,10 @@ public class MovieUserStatusController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping("/favorites")
-    public GenericResponse<List<MovieUserStatusResponse>> getMyFavorites() {
+    public ResponseEntity<GenericResponse<List<MovieUserStatusResponse>>> getMyFavorites() {
         List<MovieUserStatusResponse> response = movieUserStatusService.getMyFavorites();
-        return new GenericResponse<>(true, "Favorite movies retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Favorite movies retrieved successfully", response));
     }
 
     @Operation(
@@ -89,8 +95,9 @@ public class MovieUserStatusController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping("/watched")
-    public GenericResponse<List<MovieUserStatusResponse>> getMyWatched() {
+    public ResponseEntity<GenericResponse<List<MovieUserStatusResponse>>> getMyWatched() {
         List<MovieUserStatusResponse> response = movieUserStatusService.getMyWatched();
-        return new GenericResponse<>(true, "Watched movies retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Watched movies retrieved successfully", response));
     }
 }

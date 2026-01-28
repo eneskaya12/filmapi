@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.cinecore.model.dto.request.UserUpdateRequest;
+import org.example.cinecore.model.dto.request.UserAdminUpdateRequest;
 import org.example.cinecore.model.dto.response.GenericResponse;
 import org.example.cinecore.model.dto.response.UserResponse;
 import org.example.cinecore.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,9 +33,10 @@ public class UserManagementController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @GetMapping("/{id}")
-    public GenericResponse<UserResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse<UserResponse>> getUserById(@PathVariable Long id) {
         UserResponse response = userService.getUserById(id);
-        return new GenericResponse<>(true, "User details retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "User details retrieved successfully", response));
     }
 
     @Operation(
@@ -45,9 +48,10 @@ public class UserManagementController {
             @ApiResponse(responseCode = "403", description = "Access denied - ADMIN role required")
     })
     @GetMapping
-    public GenericResponse<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<GenericResponse<List<UserResponse>>> getAllUsers() {
         List<UserResponse> responses = userService.getAllUsers();
-        return new GenericResponse<>(true, "Users retrieved successfully", responses);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Users retrieved successfully", responses));
     }
 
     @Operation(
@@ -61,9 +65,10 @@ public class UserManagementController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PatchMapping("/{id}")
-    public GenericResponse<Void> updateUserById(@PathVariable Long id, @RequestBody @Valid UserUpdateRequest request) {
-        userService.updateUser(id, request);
-        return new GenericResponse<>(true, "User updated successfully", null);
+    public ResponseEntity<GenericResponse<Void>> updateUserById(@PathVariable Long id, @RequestBody @Valid UserAdminUpdateRequest request) {
+        userService.updateUserByAdmin(id, request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "User updated successfully", null));
     }
 
     @Operation(
@@ -76,8 +81,9 @@ public class UserManagementController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @DeleteMapping("/{id}")
-    public GenericResponse<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse<Void>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return new GenericResponse<>(true, "User deleted successfully", null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "User deleted successfully", null));
     }
 }

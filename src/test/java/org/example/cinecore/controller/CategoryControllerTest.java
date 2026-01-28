@@ -5,9 +5,12 @@ import org.example.cinecore.config.TestSecurityConfig;
 import org.example.cinecore.model.dto.request.CategoryCreateRequest;
 import org.example.cinecore.model.dto.request.CategoryUpdateRequest;
 import org.example.cinecore.model.dto.response.CategoryResponse;
+import org.example.cinecore.model.dto.response.MovieResponse;
 import org.example.cinecore.model.dto.response.PagedResponse;
 import org.example.cinecore.security.JwtAuthenticationFilter;
+import org.example.cinecore.model.enums.Language;
 import org.example.cinecore.service.CategoryService;
+import org.example.cinecore.service.MovieCategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +51,11 @@ class CategoryControllerTest {
     @MockitoBean
     private CategoryService categoryService;
 
+    @MockitoBean
+    private MovieCategoryService movieCategoryService;
+
+    private MovieResponse movieResponse;
+
     private CategoryResponse categoryResponse;
     private CategoryCreateRequest createRequest;
     private CategoryUpdateRequest updateRequest;
@@ -56,6 +65,16 @@ class CategoryControllerTest {
         categoryResponse = CategoryResponse.builder()
                 .id(1L)
                 .name("Action")
+                .build();
+
+        movieResponse = MovieResponse.builder()
+                .id(1L)
+                .title("Inception")
+                .description("A mind-bending thriller")
+                .duration(148)
+                .language(Language.EN)
+                .imdb(8.8)
+                .releaseDate(Instant.now())
                 .build();
 
         createRequest = new CategoryCreateRequest("Action");
@@ -104,18 +123,38 @@ class CategoryControllerTest {
     }
 
     @Nested
+    @DisplayName("GET /api/categories/{categoryId}/movies - Public")
+    class GetMoviesOfCategoryTests {
+
+        @Test
+        @DisplayName("Anyone should get movies of category")
+        void getMoviesOfCategory_WithoutAuth_ShouldReturn200() throws Exception {
+            when(movieCategoryService.getMoviesOfCategory(1L)).thenReturn(List.of(movieResponse));
+
+            mockMvc.perform(get("/api/categories/1/movies")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(true))
+                    .andExpect(jsonPath("$.message").value("Movies retrieved successfully"))
+                    .andExpect(jsonPath("$.payload[0].title").value("Inception"));
+
+            verify(movieCategoryService, times(1)).getMoviesOfCategory(1L);
+        }
+    }
+
+    @Nested
     @DisplayName("POST/PATCH/DELETE - ADMIN required endpoint tests")
     class AdminEndpointTests {
 
         @Test
         @DisplayName("ADMIN user should add category")
         @WithMockUser(roles = "ADMIN")
-        void addCategory_WithAdminRole_ShouldReturn200() throws Exception {
+        void addCategory_WithAdminRole_ShouldReturn201() throws Exception {
             doNothing().when(categoryService).addCategory(any(CategoryCreateRequest.class));
 
             mockMvc.perform(post("/api/categories").contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(createRequest)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.status").value(true))
                     .andExpect(jsonPath("$.message").value("Category added successfully"));
 

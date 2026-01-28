@@ -74,12 +74,12 @@ class MovieCategoryControllerTest {
         @Test
         @DisplayName("ADMIN should add category to movie")
         @WithMockUser(roles = "ADMIN")
-        void addCategoryToMovie_WithAdminRole_ShouldReturn200() throws Exception {
+        void addCategoryToMovie_WithAdminRole_ShouldReturn201() throws Exception {
             doNothing().when(movieCategoryService).addCategoryToMovie(1L, 2L);
 
             mockMvc.perform(post("/api/movies/1/categories/2")
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.status").value(true))
                     .andExpect(jsonPath("$.message").value("Category added to movie successfully"));
 
@@ -154,26 +154,6 @@ class MovieCategoryControllerTest {
                     .andExpect(jsonPath("$.payload[0].name").value("Action"));
 
             verify(movieCategoryService, times(1)).getCategoriesOfMovie(1L);
-        }
-    }
-
-    @Nested
-    @DisplayName("GET /api/categories/{categoryId}/movies - Public")
-    class GetMoviesOfCategoryTests {
-
-        @Test
-        @DisplayName("Anyone should get movies of category")
-        void getMoviesOfCategory_WithoutAuth_ShouldReturn200() throws Exception {
-            when(movieCategoryService.getMoviesOfCategory(1L)).thenReturn(List.of(movieResponse));
-
-            mockMvc.perform(get("/api/categories/1/movies")
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value(true))
-                    .andExpect(jsonPath("$.message").value("Movies retrieved successfully"))
-                    .andExpect(jsonPath("$.payload[0].title").value("Inception"));
-
-            verify(movieCategoryService, times(1)).getMoviesOfCategory(1L);
         }
     }
 }

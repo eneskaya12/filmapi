@@ -2,7 +2,7 @@ package org.example.cinecore.service.impl;
 
 import org.example.cinecore.exception.EntityNotFoundException;
 import org.example.cinecore.mapper.UserMapper;
-import org.example.cinecore.model.dto.request.UserUpdateRequest;
+import org.example.cinecore.model.dto.request.UserAdminUpdateRequest;
 import org.example.cinecore.model.dto.response.UserResponse;
 import org.example.cinecore.model.entity.User;
 import org.example.cinecore.model.enums.Role;
@@ -42,7 +42,7 @@ class UserServiceImplTest {
 
     private User user;
     private UserResponse userResponse;
-    private UserUpdateRequest updateRequest;
+    private UserAdminUpdateRequest updateRequest;
 
     @BeforeEach
     void setUp() {
@@ -61,7 +61,7 @@ class UserServiceImplTest {
                 .role(Role.USER)
                 .build();
 
-        updateRequest = new UserUpdateRequest("Jane Doe", "jane@example.com", "newPassword", Role.ADMIN);
+        updateRequest = new UserAdminUpdateRequest("Jane Doe", "jane@example.com", "newPassword", Role.ADMIN);
     }
 
     @Nested
@@ -159,10 +159,10 @@ class UserServiceImplTest {
             when(passwordEncoder.encode("newPassword")).thenReturn("encodedNewPassword");
             when(userRepository.save(any(User.class))).thenReturn(user);
 
-            userService.updateUser(1L, updateRequest);
+            userService.updateUserByAdmin(1L, updateRequest);
 
             verify(userRepository, times(1)).findById(1L);
-            verify(userMapper, times(1)).updateUserFromRequest(updateRequest, user);
+            verify(userMapper, times(1)).updateUserAdminFromRequest(updateRequest, user);
             verify(passwordEncoder, times(1)).encode("newPassword");
             verify(userRepository, times(1)).save(user);
         }
@@ -170,15 +170,15 @@ class UserServiceImplTest {
         @Test
         @DisplayName("Should update user without password change")
         void updateUser_WithoutPassword_ShouldNotEncodePassword() {
-            UserUpdateRequest requestWithoutPassword = new UserUpdateRequest("Jane Doe", "jane@example.com", null, Role.USER);
+            UserAdminUpdateRequest requestWithoutPassword = new UserAdminUpdateRequest("Jane Doe", "jane@example.com", null, Role.USER);
 
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
             when(userRepository.save(any(User.class))).thenReturn(user);
 
-            userService.updateUser(1L, requestWithoutPassword);
+            userService.updateUserByAdmin(1L, requestWithoutPassword);
 
             verify(userRepository, times(1)).findById(1L);
-            verify(userMapper, times(1)).updateUserFromRequest(requestWithoutPassword, user);
+            verify(userMapper, times(1)).updateUserAdminFromRequest(requestWithoutPassword, user);
             verify(passwordEncoder, never()).encode(any());
             verify(userRepository, times(1)).save(user);
         }
@@ -188,7 +188,7 @@ class UserServiceImplTest {
         void updateUser_WithNonExistingId_ShouldThrowException() {
             when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> userService.updateUser(999L, updateRequest))
+            assertThatThrownBy(() -> userService.updateUserByAdmin(999L, updateRequest))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessage("User not found");
 

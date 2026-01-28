@@ -3,6 +3,7 @@ package org.example.cinecore.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.cinecore.config.TestSecurityConfig;
 import org.example.cinecore.mapper.UserMapper;
+import org.example.cinecore.model.dto.request.UserAdminUpdateRequest;
 import org.example.cinecore.model.dto.request.UserUpdateRequest;
 import org.example.cinecore.model.dto.response.UserResponse;
 import org.example.cinecore.model.entity.User;
@@ -74,7 +75,7 @@ class UserControllerTest {
                 .role(Role.USER)
                 .build();
 
-        updateRequest = new UserUpdateRequest("Jane Doe", "jane@example.com", "newPassword123", null);
+        updateRequest = new UserUpdateRequest("Jane Doe", "jane@example.com", "newPassword123");
     }
 
     @Nested
@@ -120,7 +121,7 @@ class UserControllerTest {
         @WithMockUser(username = "john@example.com", roles = "USER")
         void updateMyProfile_WhenAuthenticated_ShouldReturn200() throws Exception {
             when(authenticationService.getAuthenticatedUser()).thenReturn(user);
-            doNothing().when(userService).updateUser(eq(1L), any(UserUpdateRequest.class));
+            doNothing().when(userService).updateUserByUser(eq(1L), any(UserUpdateRequest.class));
 
             mockMvc.perform(patch("/api/users/profile")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -130,7 +131,7 @@ class UserControllerTest {
                     .andExpect(jsonPath("$.message").value("Profile updated successfully"));
 
             verify(authenticationService, times(1)).getAuthenticatedUser();
-            verify(userService, times(1)).updateUser(eq(1L), any(UserUpdateRequest.class));
+            verify(userService, times(1)).updateUserByUser(eq(1L), any(UserUpdateRequest.class));
         }
 
         @Test
@@ -141,7 +142,7 @@ class UserControllerTest {
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isForbidden());
 
-            verify(userService, never()).updateUser(any(), any());
+            verify(userService, never()).updateUserByUser(any(), any());
         }
     }
 }

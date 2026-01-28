@@ -124,12 +124,12 @@ class MovieControllerTest {
         @Test
         @DisplayName("ADMIN user should add movie")
         @WithMockUser(roles = "ADMIN")
-        void addMovie_WithAdminRole_ShouldReturn200() throws Exception {
+        void addMovie_WithAdminRole_ShouldReturn201() throws Exception {
             doNothing().when(movieService).addMovie(any(MovieCreateRequest.class));
 
             mockMvc.perform(post("/api/movies").contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(movieCreateRequest)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.status").value(true))
                     .andExpect(jsonPath("$.message").value("Movie added successfully"));
 

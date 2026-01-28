@@ -51,8 +51,9 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Invalid credentials")
     })
     @PostMapping("/login")
-    public GenericResponse<AuthenticationResponse> login(@RequestBody @Valid UserLoginRequest request) {
+    public ResponseEntity<GenericResponse<AuthenticationResponse>> login(@RequestBody @Valid UserLoginRequest request) {
         AuthenticationResponse response = authenticationService.login(request);
-        return new GenericResponse<>(true, "Login successful", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Login successful", response));
     }
 }

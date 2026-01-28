@@ -15,6 +15,8 @@ import org.example.cinecore.service.MovieService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,14 +31,15 @@ public class MovieController {
             description = "Creates a new movie. Requires ADMIN role."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Movie added successfully"),
+            @ApiResponse(responseCode = "201", description = "Movie added successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "403", description = "Access denied - ADMIN role required")
     })
     @PostMapping
-    public GenericResponse<Void> addMovie(@RequestBody @Valid MovieCreateRequest request) {
+    public ResponseEntity<GenericResponse<Void>> addMovie(@RequestBody @Valid MovieCreateRequest request) {
         movieService.addMovie(request);
-        return new GenericResponse<>(true, "Movie added successfully", null);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new GenericResponse<>(true, "Movie added successfully", null));
     }
 
     @Operation(
@@ -48,9 +51,10 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     @GetMapping("/{id}")
-    public GenericResponse<MovieResponse> getMovieById(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse<MovieResponse>> getMovieById(@PathVariable Long id) {
         MovieResponse response = movieService.getMovieById(id);
-        return new GenericResponse<>(true, "Movie details retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movie details retrieved successfully", response));
     }
 
     @Operation(
@@ -61,10 +65,11 @@ public class MovieController {
             @ApiResponse(responseCode = "200", description = "Movies retrieved successfully")
     })
     @GetMapping
-    public GenericResponse<PagedResponse<MovieResponse>> getAllMovies(
+    public ResponseEntity<GenericResponse<PagedResponse<MovieResponse>>> getAllMovies(
             @ParameterObject @PageableDefault(page = 0, size = 5) Pageable pageable) {
         PagedResponse<MovieResponse> response = movieService.getAllMovies(pageable);
-        return new GenericResponse<>(true, "Movies retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movies retrieved successfully", response));
     }
 
     @Operation(
@@ -78,9 +83,10 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     @PatchMapping("/{id}")
-    public GenericResponse<Void> updateMovie(@PathVariable Long id, @RequestBody @Valid MovieUpdateRequest request) {
+    public ResponseEntity<GenericResponse<Void>> updateMovie(@PathVariable Long id, @RequestBody @Valid MovieUpdateRequest request) {
         movieService.updateMovie(id, request);
-        return new GenericResponse<>(true, "Movie updated successfully", null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movie updated successfully", null));
     }
 
     @Operation(
@@ -93,8 +99,9 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     @DeleteMapping("/{id}")
-    public GenericResponse<Void> deleteMovie(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse<Void>> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);
-        return new GenericResponse<>(true, "Movie deleted successfully", null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movie deleted successfully", null));
     }
 }

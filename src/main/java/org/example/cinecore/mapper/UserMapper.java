@@ -1,5 +1,6 @@
 package org.example.cinecore.mapper;
 
+import org.example.cinecore.model.dto.request.UserAdminUpdateRequest;
 import org.example.cinecore.model.dto.request.UserCreateRequest;
 import org.example.cinecore.model.dto.request.UserUpdateRequest;
 import org.example.cinecore.model.dto.response.UserResponse;
@@ -20,4 +21,7 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromRequest(UserUpdateRequest request, @MappingTarget User user);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateUserAdminFromRequest(UserAdminUpdateRequest request, @MappingTarget User user);
 }

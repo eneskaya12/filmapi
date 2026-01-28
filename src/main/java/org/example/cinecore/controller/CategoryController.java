@@ -10,11 +10,17 @@ import org.example.cinecore.model.dto.request.CategoryCreateRequest;
 import org.example.cinecore.model.dto.request.CategoryUpdateRequest;
 import org.example.cinecore.model.dto.response.CategoryResponse;
 import org.example.cinecore.model.dto.response.GenericResponse;
+import org.example.cinecore.model.dto.response.MovieResponse;
 import org.example.cinecore.model.dto.response.PagedResponse;
 import org.example.cinecore.service.CategoryService;
+import org.example.cinecore.service.MovieCategoryService;
+
+import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,21 +30,23 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final MovieCategoryService movieCategoryService;
 
     @Operation(
             summary = "Add a new category",
             description = "Creates a new category. Requires ADMIN role."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Category added successfully"),
+            @ApiResponse(responseCode = "201", description = "Category added successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "403", description = "Access denied - ADMIN role required"),
             @ApiResponse(responseCode = "409", description = "Category name already exists")
     })
     @PostMapping
-    public GenericResponse<Void> addCategory(@RequestBody @Valid CategoryCreateRequest request) {
+    public ResponseEntity<GenericResponse<Void>> addCategory(@RequestBody @Valid CategoryCreateRequest request) {
         categoryService.addCategory(request);
-        return new GenericResponse<>(true, "Category added successfully", null);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new GenericResponse<>(true, "Category added successfully", null));
     }
 
     @Operation(
@@ -50,9 +58,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "Category not found")
     })
     @GetMapping("/{id}")
-    public GenericResponse<CategoryResponse> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse<CategoryResponse>> getCategoryById(@PathVariable Long id) {
         CategoryResponse response = categoryService.getCategoryById(id);
-        return new GenericResponse<>(true, "Category details retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Category details retrieved successfully", response));
     }
 
     @Operation(
@@ -63,10 +72,11 @@ public class CategoryController {
             @ApiResponse(responseCode = "200", description = "Categories retrieved successfully")
     })
     @GetMapping
-    public GenericResponse<PagedResponse<CategoryResponse>> getAllCategories(
+    public ResponseEntity<GenericResponse<PagedResponse<CategoryResponse>>> getAllCategories(
             @ParameterObject @PageableDefault(page = 0, size = 5) Pageable pageable) {
         PagedResponse<CategoryResponse> response = categoryService.getAllCategories(pageable);
-        return new GenericResponse<>(true, "Categories retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Categories retrieved successfully", response));
     }
 
     @Operation(
@@ -81,9 +91,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "409", description = "Category name already exists")
     })
     @PatchMapping("/{id}")
-    public GenericResponse<Void> updateCategory(@PathVariable Long id, @RequestBody @Valid CategoryUpdateRequest request) {
+    public ResponseEntity<GenericResponse<Void>> updateCategory(@PathVariable Long id, @RequestBody @Valid CategoryUpdateRequest request) {
         categoryService.updateCategory(id, request);
-        return new GenericResponse<>(true, "Category updated successfully", null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Category updated successfully", null));
     }
 
     @Operation(
@@ -96,8 +107,24 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "Category not found")
     })
     @DeleteMapping("/{id}")
-    public GenericResponse<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse<Void>> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
-        return new GenericResponse<>(true, "Category deleted successfully", null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Category deleted successfully", null));
+    }
+
+    @Operation(
+            summary = "Get movies of a category",
+            description = "Returns all movies in a category. Publicly accessible."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Movies retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
+    @GetMapping("/{id}/movies")
+    public ResponseEntity<GenericResponse<List<MovieResponse>>> getMoviesOfCategory(@PathVariable Long id) {
+        List<MovieResponse> response = movieCategoryService.getMoviesOfCategory(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Movies retrieved successfully", response));
     }
 }

@@ -191,13 +191,14 @@ CRUD operations for movies. Public read access, admin-only write operations.
 
 CRUD operations for categories. Public read access, admin-only write operations.
 
-| Method | Endpoint                | Description          | Access |
-|--------|-------------------------|----------------------|--------|
-| GET    | `/api/categories`       | Get all categories   | Public |
-| GET    | `/api/categories/{id}`  | Get category by ID   | Public |
-| POST   | `/api/categories`       | Add a new category   | Admin  |
-| PATCH  | `/api/categories/{id}`  | Update a category    | Admin  |
-| DELETE | `/api/categories/{id}`  | Delete a category    | Admin  |
+| Method | Endpoint                     | Description              | Access |
+|--------|------------------------------|--------------------------|--------|
+| GET    | `/api/categories`            | Get all categories       | Public |
+| GET    | `/api/categories/{id}`       | Get category by ID       | Public |
+| GET    | `/api/categories/{id}/movies`| Get movies in a category | Public |
+| POST   | `/api/categories`            | Add a new category       | Admin  |
+| PATCH  | `/api/categories/{id}`       | Update a category        | Admin  |
+| DELETE | `/api/categories/{id}`       | Delete a category        | Admin  |
 
 
 ## Movie-Category Relations
@@ -207,7 +208,6 @@ Manage associations between movies and categories.
 | Method | Endpoint                                        | Description                    | Access |
 |--------|-------------------------------------------------|--------------------------------|--------|
 | GET    | `/api/movies/{movieId}/categories`              | Get categories of a movie      | Public |
-| GET    | `/api/categories/{categoryId}/movies`           | Get movies in a category       | Public |
 | POST   | `/api/movies/{movieId}/categories/{categoryId}` | Add movie to category          | Admin  |
 | DELETE | `/api/movies/{movieId}/categories/{categoryId}` | Remove movie from category     | Admin  |
 

@@ -7,12 +7,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.cinecore.mapper.UserMapper;
+import org.example.cinecore.model.dto.request.UserAdminUpdateRequest;
 import org.example.cinecore.model.dto.request.UserUpdateRequest;
 import org.example.cinecore.model.dto.response.GenericResponse;
 import org.example.cinecore.model.dto.response.UserResponse;
 import org.example.cinecore.model.entity.User;
 import org.example.cinecore.service.AuthenticationService;
 import org.example.cinecore.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,10 +36,11 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @GetMapping
-    public GenericResponse<UserResponse> getMyProfile() {
+    public ResponseEntity<GenericResponse<UserResponse>> getMyProfile() {
         User user = authenticationService.getAuthenticatedUser();
         UserResponse response = userMapper.toUserResponse(user);
-        return new GenericResponse<>(true, "Profile retrieved successfully", response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Profile retrieved successfully", response));
     }
 
     @Operation(
@@ -49,16 +53,11 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PatchMapping
-    public GenericResponse<Void> updateMyProfile(@RequestBody @Valid UserUpdateRequest request) {
+    public ResponseEntity<GenericResponse<Void>> updateMyProfile(@RequestBody @Valid UserUpdateRequest request) {
         User user = authenticationService.getAuthenticatedUser();
 
-        UserUpdateRequest safeRequest = new UserUpdateRequest(
-                request.fullname(),
-                request.email(),
-                request.password(),
-                null
-        );
-        userService.updateUser(user.getId(), safeRequest);
-        return new GenericResponse<>(true, "Profile updated successfully", null);
+        userService.updateUserByUser(user.getId(), request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new GenericResponse<>(true, "Profile updated successfully", null));
     }
 }

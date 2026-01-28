@@ -2,7 +2,7 @@ package org.example.cinecore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.cinecore.config.TestSecurityConfig;
-import org.example.cinecore.model.dto.request.UserUpdateRequest;
+import org.example.cinecore.model.dto.request.UserAdminUpdateRequest;
 import org.example.cinecore.model.dto.response.UserResponse;
 import org.example.cinecore.model.enums.Role;
 import org.example.cinecore.security.JwtAuthenticationFilter;
@@ -47,7 +47,7 @@ class UserManagementControllerTest {
     private UserService userService;
 
     private UserResponse userResponse;
-    private UserUpdateRequest updateRequest;
+    private UserAdminUpdateRequest updateRequest;
 
     @BeforeEach
     void setUp() {
@@ -58,7 +58,7 @@ class UserManagementControllerTest {
                 .role(Role.USER)
                 .build();
 
-        updateRequest = new UserUpdateRequest("Jane Doe", "jane@example.com", "newPassword123", Role.ADMIN);
+        updateRequest = new UserAdminUpdateRequest("Jane Doe", "jane@example.com", "newPassword123", Role.ADMIN);
     }
 
     @Nested
@@ -143,7 +143,7 @@ class UserManagementControllerTest {
         @DisplayName("ADMIN should update user")
         @WithMockUser(roles = "ADMIN")
         void updateUser_WithAdminRole_ShouldReturn200() throws Exception {
-            doNothing().when(userService).updateUser(eq(1L), any(UserUpdateRequest.class));
+            doNothing().when(userService).updateUserByAdmin(eq(1L), any(UserAdminUpdateRequest.class));
 
             mockMvc.perform(patch("/api/users/1")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -152,7 +152,7 @@ class UserManagementControllerTest {
                     .andExpect(jsonPath("$.status").value(true))
                     .andExpect(jsonPath("$.message").value("User updated successfully"));
 
-            verify(userService, times(1)).updateUser(eq(1L), any(UserUpdateRequest.class));
+            verify(userService, times(1)).updateUserByAdmin(eq(1L), any(UserAdminUpdateRequest.class));
         }
 
         @Test
@@ -164,7 +164,7 @@ class UserManagementControllerTest {
                             .content(objectMapper.writeValueAsString(updateRequest)))
                     .andExpect(status().isForbidden());
 
-            verify(userService, never()).updateUser(any(), any());
+            verify(userService, never()).updateUserByAdmin(any(), any());
         }
     }
 
